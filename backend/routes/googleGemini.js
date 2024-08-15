@@ -25,13 +25,22 @@ const geminiModel = googleAI.getGenerativeModel({
 })
 
 //routes
-router.get('/createLinkedInPost', async (req, res) => {
+router.post('/createLinkedInPost', async (req, res) => {
   const { videoUrl } = req.body
-  const transcriptText = await YoutubeTranscript.fetchTranscript(
-    'https://www.youtube.com/watch?v=H58vbez_m4E'
-  )
+  const transcriptArray = await YoutubeTranscript.fetchTranscript(videoUrl)
+  const transcriptText = transcriptArray.map((part) => part.text).join(' ')
+  const cleanedTranscript = transcriptText.replace(/[^\w\s]/g, '')
 
-  res.send(transcriptText)
+  const prompt = `
+  Create a post for LinkedIn regarding the video transcript given below. The character limit must be below 3000 also add neccessary hashtag at the end of the post.
+  Transcipt: ${cleanedTranscript}
+  `
+
+  const result = await geminiModel.generateContent(prompt)
+
+  const response = result.response
+
+  res.json({ response: response.text() })
 })
 
 export default router
