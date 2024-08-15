@@ -1,6 +1,7 @@
 import express from 'express'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import dotenv from 'dotenv'
+import { YoutubeTranscript } from 'youtube-transcript'
 
 dotenv.config()
 
@@ -24,5 +25,13 @@ const geminiModel = googleAI.getGenerativeModel({
 })
 
 //routes
+router.get('/createLinkedInPost', async (req, res) => {
+  const { videoUrl } = req.body
+  const transcriptText = await YoutubeTranscript.fetchTranscript(
+    'https://www.youtube.com/watch?v=H58vbez_m4E'
+  )
 
-module.exports = router
+  res.send(transcriptText)
+})
+
+export default router
