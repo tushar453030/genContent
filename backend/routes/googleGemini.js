@@ -32,15 +32,16 @@ router.post('/createLinkedInPost', async (req, res) => {
   const cleanedTranscript = transcriptText.replace(/[^\w\s]/g, '')
 
   const prompt = `
-  Create a post for LinkedIn regarding the video transcript given below. The character limit must be below 3000 also add neccessary hashtag at the end of the post.
+  Act as a user who created a video on youtube now create a post for LinkedIn. The character limit must be below 1000 also add neccessary hashtag at the end of the post. Use the below transcript to frame your reponse
   Transcipt: ${cleanedTranscript}
   `
 
   const result = await geminiModel.generateContent(prompt)
 
-  const response = result.response
+  const response = result.response.text()
+  console.log(response)
 
-  res.json({ response: response.text() })
+  res.json({ response })
 })
 
 export default router
