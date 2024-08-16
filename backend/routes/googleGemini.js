@@ -40,8 +40,7 @@ router.post('/createLinkedInPost', async (req, res) => {
 
   const response = result.response.text()
   console.log(response)
-
-  res.json({ response })
+  res.send({ response })
 })
 
 export default router
