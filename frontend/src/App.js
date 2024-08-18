@@ -7,28 +7,39 @@ import {
   Tab,
   Box,
   Typography,
-  Button,
   CardContent,
   Card,
+  CircularProgress,
+  IconButton,
 } from '@mui/material'
 
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+
 function App() {
-  const [videoUrl, setVideoUrl] = useState('')
-  const [activeTab, setActiveTab] = useState(0)
+  const [videoUrl, setVideoUrl] = useState(null)
+  const [activeTab, setActiveTab] = useState(null)
   const [content, setContent] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleInputChange = (event) => {
     setVideoUrl(event.target.value)
+    setError('')
   }
 
   const handleTabChange = async (event, newValue) => {
+    if (!videoUrl) {
+      setError('Please enter the YouTube URL')
+      return
+    }
     setActiveTab(newValue)
+    setLoading(true)
     const tabNames = ['LinkedIn', 'Blog', 'Twitter']
     const tabName = tabNames[newValue]
     try {
       console.log(videoUrl)
       const response = await axios.post(
-        `http://localhost:5000/generate/createLinkedInPost`,
+        `http://localhost:5000/generate/${tabName}Post`,
         {
           videoUrl: videoUrl,
         }
@@ -41,23 +52,34 @@ function App() {
       console.error('Error fetching data:', error)
       setContent('Error fetching data')
     }
+    setLoading(false)
   }
 
   const renderContent = () => {
-    const tabTitles = ['LinkedIn Post', 'Blog Post', 'Twitter Post']
     return (
       <CardContent>
         <Typography variant='h5'>
           {['LinkedIn Post', 'Blog Post', 'Twitter Post'][activeTab]}
         </Typography>
-        <Typography
-          variant='body1'
-          dangerouslySetInnerHTML={{
-            __html: `${content}`,
-          }}
-        ></Typography>
+        {loading ? ( // Display loader when loading is true
+          <CircularProgress />
+        ) : (
+          <Typography
+            variant='body1'
+            dangerouslySetInnerHTML={{
+              __html: `${content}`,
+            }}
+          ></Typography>
+        )}
       </CardContent>
     )
+  }
+
+  const handleCopy = () => {
+    if (content) {
+      navigator.clipboard.writeText(content.replace(/<br\/>/g, '\n'))
+      alert('Content copied to clipboard!')
+    }
   }
 
   return (
@@ -74,6 +96,11 @@ function App() {
           onChange={handleInputChange}
           sx={{ marginBottom: 3 }}
         />
+        {error && (
+          <Typography color='error' sx={{ marginBottom: 3 }}>
+            {error}
+          </Typography>
+        )}
         <Card
           sx={{
             display: 'flex',
@@ -103,6 +130,18 @@ function App() {
             <Tab label='Twitter Post' />
           </Tabs>
           <Box sx={{ flex: 1, overflowY: 'auto' }}>{renderContent()}</Box>
+          {content && (
+            <IconButton
+              onClick={handleCopy}
+              sx={{
+                position: 'relative',
+                alignItems: 'flex-start',
+                maxHeight: '40px',
+              }}
+            >
+              <ContentCopyIcon />
+            </IconButton>
+          )}
         </Card>
       </Box>
     </Container>
