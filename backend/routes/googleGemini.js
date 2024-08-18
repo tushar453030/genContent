@@ -7,8 +7,7 @@ dotenv.config()
 
 const router = express.Router()
 
-//configure google generative ai
-
+// Configure Google Generative AI
 const gemini_api_key = process.env.GEMINI_API_KEY
 const googleAI = new GoogleGenerativeAI(gemini_api_key)
 
@@ -24,23 +23,71 @@ const geminiModel = googleAI.getGenerativeModel({
   geminiConfig,
 })
 
-//routes
-router.post('/createLinkedInPost', async (req, res) => {
-  const { videoUrl } = req.body
-  const transcriptArray = await YoutubeTranscript.fetchTranscript(videoUrl)
-  const transcriptText = transcriptArray.map((part) => part.text).join(' ')
-  const cleanedTranscript = transcriptText.replace(/[^\w\s]/g, '')
+// Routes
+router.post('/LinkedInPost', async (req, res) => {
+  try {
+    const { videoUrl } = req.body
+    const transcriptArray = await YoutubeTranscript.fetchTranscript(videoUrl)
+    const transcriptText = transcriptArray.map((part) => part.text).join(' ')
+    const cleanedTranscript = transcriptText.replace(/[^\w\s]/g, '')
 
-  const prompt = `
-  Act as a user who created a video on youtube now create a post for LinkedIn. The character limit must be below 1000 also add neccessary hashtag at the end of the post. Use the below transcript to frame your reponse
-  Transcipt: ${cleanedTranscript}
-  `
+    const prompt = `
+    Act as a user who created a video on youtube now create a post for LinkedIn. The character limit must be below 1000 also add necessary hashtags at the end of the post. Use the below transcript to frame your response:
+    Transcript: ${cleanedTranscript}
+    `
 
-  const result = await geminiModel.generateContent(prompt)
+    const result = await geminiModel.generateContent(prompt)
+    const response = result.response.text()
 
-  const response = result.response.text()
-  console.log(response)
-  res.send({ response })
+    res.send({ response })
+  } catch (error) {
+    console.error('Error generating LinkedIn post:', error)
+    res.status(500).send({ error: 'Error generating LinkedIn post' })
+  }
+})
+
+router.post('/BlogPost', async (req, res) => {
+  try {
+    const { videoUrl } = req.body
+    const transcriptArray = await YoutubeTranscript.fetchTranscript(videoUrl)
+    const transcriptText = transcriptArray.map((part) => part.text).join(' ')
+    const cleanedTranscript = transcriptText.replace(/[^\w\s]/g, '')
+
+    const prompt = `
+    Act as a user who created a video on youtube now create a blog on it. The word limit must be below 500. Use the below transcript to know the content about the video and then frame your response:
+    Transcript: ${cleanedTranscript}
+    `
+
+    const result = await geminiModel.generateContent(prompt)
+    const response = result.response.text()
+
+    res.send({ response })
+  } catch (error) {
+    console.error('Error generating Blog post:', error)
+    res.status(500).send({ error: 'Error generating Blog post' })
+  }
+})
+
+router.post('/TwitterPost', async (req, res) => {
+  try {
+    const { videoUrl } = req.body
+    const transcriptArray = await YoutubeTranscript.fetchTranscript(videoUrl)
+    const transcriptText = transcriptArray.map((part) => part.text).join(' ')
+    const cleanedTranscript = transcriptText.replace(/[^\w\s]/g, '')
+
+    const prompt = `
+    Act as a user who created a video on youtube now create a tweet for Twitter. The character limit must be below 200 also add necessary hashtags at the end of the post. Use the below transcript to frame your response:
+    Transcript: ${cleanedTranscript}
+    `
+
+    const result = await geminiModel.generateContent(prompt)
+    const response = result.response.text()
+
+    res.send({ response })
+  } catch (error) {
+    console.error('Error generating Twitter post:', error)
+    res.status(500).send({ error: 'Error generating Twitter post' })
+  }
 })
 
 export default router
