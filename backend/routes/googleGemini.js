@@ -42,7 +42,7 @@ router.post('/LinkedInPost', async (req, res) => {
     res.send({ response })
   } catch (error) {
     console.error('Error generating LinkedIn post:', error)
-    res.status(500).send({ error: 'Error generating LinkedIn post' })
+    res.status(500).send({ response: 'Error generating LinkedIn post' })
   }
 })
 
@@ -64,7 +64,7 @@ router.post('/BlogPost', async (req, res) => {
     res.send({ response })
   } catch (error) {
     console.error('Error generating Blog post:', error)
-    res.status(500).send({ error: 'Error generating Blog post' })
+    res.status(500).send({ response: 'Error generating Blog post' })
   }
 })
 
@@ -86,7 +86,7 @@ router.post('/TwitterPost', async (req, res) => {
     res.send({ response })
   } catch (error) {
     console.error('Error generating Twitter post:', error)
-    res.status(500).send({ error: 'Error generating Twitter post' })
+    res.status(500).send({ response: 'Error generating Twitter post' })
   }
 })
 
