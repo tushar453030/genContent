@@ -38,7 +38,7 @@ function App() {
     const tabName = tabNames[newValue]
     try {
       const response = await axios.post(
-        `https://gencontent.netlify.app/generate/${tabName}Post`,
+        `https://gen-content.vercel.app/generate/${tabName}Post`,
         {
           videoUrl: videoUrl,
         }
