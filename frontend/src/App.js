@@ -37,14 +37,13 @@ function App() {
     const tabNames = ['LinkedIn', 'Blog', 'Twitter']
     const tabName = tabNames[newValue]
     try {
-      console.log(videoUrl)
       const response = await axios.post(
-        `http://localhost:5000/generate/${tabName}Post`,
+        `https://gencontent.netlify.app/generate/${tabName}Post`,
         {
           videoUrl: videoUrl,
         }
       )
-      console.log(response)
+
       const rawResponse = response.data.response
       const finalResponse = rawResponse.replace(/\n/g, '<br/>')
       setContent(finalResponse)
