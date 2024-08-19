@@ -38,7 +38,7 @@ function App() {
     const tabName = tabNames[newValue]
     try {
       const response = await axios.post(
-        `https://gen-content.vercel.app/generate/${tabName}Post`,
+        `https://gen-content-5yf3mtbui-tushar453030s-projects.vercel.app/generate/${tabName}Post`,
         {
           videoUrl: videoUrl,
         }
