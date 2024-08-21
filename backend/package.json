@@ -14,6 +14,6 @@
     "ytdl-mp3": "^4.0.1"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js"
   }
 }
