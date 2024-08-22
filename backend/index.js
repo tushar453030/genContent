@@ -125,6 +125,7 @@ const proxyHandler = async (req, res) => {
     return res.status(500).send('Internal Server Error')
   }
 }
+app.all('/proxy', proxyHandler)
 
 app.use('/generate', googleGemini)
 // Express route handling
@@ -139,9 +140,10 @@ app.post('/LinkedInPostV2', async (req, res) => {
     res.status(500).send({ response: 'Error generating LinkedIn post', error })
   }
 })
-
+app.get('/', async (req, res) => {
+  res.send('I am home')
+})
 // Additional route for proxying requests
-app.all('/proxy', proxyHandler)
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
