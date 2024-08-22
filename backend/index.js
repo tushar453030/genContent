@@ -3,35 +3,13 @@ import googleGemini from './routes/googleGemini.js'
 import cors from 'cors'
 import fetch from 'node-fetch'
 import { Innertube } from 'youtubei.js/web'
-const app = express()
 
+const app = express()
 const port = 8080
 
 app.use(express.json())
-// app.use(function (request, response, next) {
-//   response.header('Access-Control-Allow-Origin', '*')
-//   response.header(
-//     'Access-Control-Allow-Headers',
-//     'Origin, X-Requested-With, Content-Type, Accept'
-//   )
-//   next()
-// })
-// app.use(cors())
-// app.use((req, res, next) => {
-//   res.setHeader('Content-Type', 'application/json;charset=UTF-8')
-//   next()
-// })
 
-// app.get('/', async (req, res) => {
-//   res.send('I am home')
-// })
-
-// app.use('/generate', googleGemini)
-
-// app.listen(port, () => {
-//   console.log(`Server running on http://localhost:${port}`)
-// })
-
+// Initialize YouTube API client
 const youtube = await Innertube.create({
   lang: 'en',
   location: 'US',
@@ -94,6 +72,16 @@ const proxyHandler = async (req, res) => {
   )
   copyHeader('range', requestHeaders, req.headers)
 
+  // Set Host header to mimic local traffic
+  requestHeaders.set('Host', url.host)
+
+  // Optional: Set X-Forwarded-For to localhost IP or remove it
+  requestHeaders.set('X-Forwarded-For', '127.0.0.1')
+
+  // Remove Referer and Origin headers to obscure the true origin
+  requestHeaders.delete('Referer')
+  requestHeaders.delete('Origin')
+
   if (!requestHeaders.has('user-agent')) {
     copyHeader('user-agent', requestHeaders, req.headers)
   }
@@ -125,9 +113,11 @@ const proxyHandler = async (req, res) => {
     return res.status(500).send('Internal Server Error')
   }
 }
+
 app.all('/proxy', proxyHandler)
 
 app.use('/generate', googleGemini)
+
 // Express route handling
 app.post('/LinkedInPostV2', async (req, res) => {
   try {
@@ -140,10 +130,10 @@ app.post('/LinkedInPostV2', async (req, res) => {
     res.status(500).send({ response: 'Error generating LinkedIn post', error })
   }
 })
+
 app.get('/', async (req, res) => {
   res.send('I am home')
 })
-// Additional route for proxying requests
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`)
