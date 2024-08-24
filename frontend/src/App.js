@@ -36,13 +36,17 @@ function App() {
     setLoading(true)
     const tabNames = ['LinkedIn', 'Blog', 'Tweet']
     const tabName = tabNames[newValue]
+    console.log(process.env.REACT_APP_BACKEND)
     try {
-      const response = await axios.post(`${process.env.BACKEND}/${tabName}`, {
-        params: {
-          videoUrl: videoUrl,
-        },
-      })
-
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND}/${tabName}`,
+        {
+          params: {
+            url: videoUrl,
+          },
+        }
+      )
+      console.log(response.data.response)
       const rawResponse = response.data.response
       const finalResponse = rawResponse.replace(/\n/g, '<br/>')
       setContent(finalResponse)
