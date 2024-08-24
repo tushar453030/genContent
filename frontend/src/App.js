@@ -34,15 +34,14 @@ function App() {
     }
     setActiveTab(newValue)
     setLoading(true)
-    const tabNames = ['LinkedIn', 'Blog', 'Twitter']
+    const tabNames = ['LinkedIn', 'Blog', 'Tweet']
     const tabName = tabNames[newValue]
     try {
-      const response = await axios.post(
-        `https://gen-content-5yf3mtbui-tushar453030s-projects.vercel.app/generate/${tabName}Post`,
-        {
+      const response = await axios.post(`${process.env.BACKEND}/${tabName}`, {
+        params: {
           videoUrl: videoUrl,
-        }
-      )
+        },
+      })
 
       const rawResponse = response.data.response
       const finalResponse = rawResponse.replace(/\n/g, '<br/>')
