@@ -87,6 +87,15 @@ function App() {
   return (
     <Container maxWidth='md'>
       <Box sx={{ minHeight: '300vh', padding: 4 }}>
+        <Typography
+          variant='body1'
+          color='error'
+          fontWeight='bold'
+          gutterBottom
+        >
+          Please paste YouTube video URL of duration not more than 20 mins and
+          specific to genres of informative, motivational, lifestyle.
+        </Typography>
         <Typography variant='h4' gutterBottom>
           Generate Content
         </Typography>
